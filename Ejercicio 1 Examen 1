@@ -1,3 +1,5 @@
+***Comandos de Imagen de Docker****
+
 # Imagen base de MySQL
 FROM mysql:latest
 
@@ -9,7 +11,6 @@ ENV MYSQL_DATABASE=tickets_db
 COPY init.sql /docker-entrypoint-initdb.d/
 
 
-***Comandos de Imagen de Docker****
 version: '3.8'
 
 services:
@@ -89,3 +90,33 @@ CREATE TABLE Calificación (
     FOREIGN KEY (ID_Caso) REFERENCES Caso(ID_Caso)
 );
 
+***DML (Data Manipulation Language)***
+
+-- Insertar usuarios
+INSERT INTO Usuario (Nombre, Correo, Teléfono) VALUES ('Juan Pérez', 'juan.perez@example.com', '123456789');
+INSERT INTO Usuario (Nombre, Correo, Teléfono) VALUES ('Ana García', 'ana.garcia@example.com', '987654321');
+
+-- Insertar ingenieros
+INSERT INTO Ingeniero (Nombre, Correo, Experiencia) VALUES ('Carlos Rodríguez', 'carlos.rodriguez@example.com', 'Experto en redes');
+INSERT INTO Ingeniero (Nombre, Correo, Experiencia) VALUES ('Marta López', 'marta.lopez@example.com', 'Especialista en hardware');
+
+-- Insertar categorías
+INSERT INTO Categoría (Nombre) VALUES ('Problema de Redes');
+INSERT INTO Categoría (Nombre) VALUES ('Problema de Hardware');
+INSERT INTO Categoría (Nombre) VALUES ('Problema de Software');
+
+-- Insertar casos
+INSERT INTO Caso (Descripción, ID_Usuario, ID_Categoría) VALUES ('No hay conexión a internet', 1, 1);
+INSERT INTO Caso (Descripción, ID_Usuario, ID_Categoría) VALUES ('La impresora no funciona', 2, 2);
+
+-- Asignar casos a ingenieros
+INSERT INTO Asignación (ID_Caso, ID_Ingeniero) VALUES (1, 1);
+INSERT INTO Asignación (ID_Caso, ID_Ingeniero) VALUES (2, 2);
+
+-- Registrar procedimientos
+INSERT INTO Procedimiento (ID_Caso, Descripción) VALUES (1, 'Revisar cableado');
+INSERT INTO Procedimiento (ID_Caso, Descripción) VALUES (2, 'Reiniciar impresora');
+
+-- Registrar calificaciones
+INSERT INTO Calificación (ID_Caso, Puntuación, Comentarios) VALUES (1, 5, 'Excelente servicio');
+INSERT INTO Calificación (ID_Caso, Puntuación, Comentarios) VALUES (2, 3, 'Servicio adecuado');
