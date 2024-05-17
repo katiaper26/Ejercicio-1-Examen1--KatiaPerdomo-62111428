@@ -1,0 +1,91 @@
+# Imagen base de MySQL
+FROM mysql:latest
+
+# Variables de entorno para la base de datos
+ENV MYSQL_ROOT_PASSWORD=root
+ENV MYSQL_DATABASE=tickets_db
+
+# Script SQL para inicializar la base de datos
+COPY init.sql /docker-entrypoint-initdb.d/
+
+
+***Comandos de Imagen de Docker****
+version: '3.8'
+
+services:
+  db:
+    build: .
+    container_name: tickets_db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tickets_db
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
+
+****Script con Sintaxis DDL y DML****
+CREATE DATABASE IF NOT EXISTS tickets_db;
+
+USE tickets_db;
+
+CREATE TABLE Usuario (
+    ID_Usuario INT AUTO_INCREMENT PRIMARY KEY,
+    Nombre VARCHAR(100) NOT NULL,
+    Correo VARCHAR(100) NOT NULL,
+    Teléfono VARCHAR(20)
+);
+
+CREATE TABLE Ingeniero (
+    ID_Ingeniero INT AUTO_INCREMENT PRIMARY KEY,
+    Nombre VARCHAR(100) NOT NULL,
+    Correo VARCHAR(100) NOT NULL,
+    Experiencia VARCHAR(200),
+    Capacidad_Actual INT DEFAULT 0
+);
+
+CREATE TABLE Categoría (
+    ID_Categoría INT AUTO_INCREMENT PRIMARY KEY,
+    Nombre VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Caso (
+    ID_Caso INT AUTO_INCREMENT PRIMARY KEY,
+    Descripción TEXT NOT NULL,
+    Fecha_Apertura DATETIME DEFAULT CURRENT_TIMESTAMP,
+    Fecha_Cierre DATETIME,
+    Estado VARCHAR(50) DEFAULT 'Abierto',
+    ID_Usuario INT,
+    ID_Categoría INT,
+    FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario),
+    FOREIGN KEY (ID_Categoría) REFERENCES Categoría(ID_Categoría)
+);
+
+CREATE TABLE Asignación (
+    ID_Asignación INT AUTO_INCREMENT PRIMARY KEY,
+    ID_Caso INT,
+    ID_Ingeniero INT,
+    Fecha_Asignación DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (ID_Caso) REFERENCES Caso(ID_Caso),
+    FOREIGN KEY (ID_Ingeniero) REFERENCES Ingeniero(ID_Ingeniero)
+);
+
+CREATE TABLE Procedimiento (
+    ID_Procedimiento INT AUTO_INCREMENT PRIMARY KEY,
+    ID_Caso INT,
+    Descripción TEXT NOT NULL,
+    Fecha_Procedimiento DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (ID_Caso) REFERENCES Caso(ID_Caso)
+);
+
+CREATE TABLE Calificación (
+    ID_Calificación INT AUTO_INCREMENT PRIMARY KEY,
+    ID_Caso INT,
+    Puntuación INT CHECK (Puntuación >= 1 AND Puntuación <= 5),
+    Comentarios TEXT,
+    FOREIGN KEY (ID_Caso) REFERENCES Caso(ID_Caso)
+);
+
